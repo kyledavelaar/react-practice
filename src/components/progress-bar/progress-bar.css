@@ -1,0 +1,16 @@
+.progress-container {
+  background: grey;
+  height: 50px;
+  width: 100%;
+}
+
+.progress {
+  background: green;
+  height: 50px;
+  width: 0;
+  transition: 1s;
+}
+
+/* .progress-container:hover .progress {
+  width: 500px;
+} */
