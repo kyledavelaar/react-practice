@@ -1,0 +1,13 @@
+
+// VARIABLES
+$color1: blue;
+$color2: lightblue;
+$border1: 1px solid black;
+
+
+// EXTEND
+%hover {
+  background: darken($color2, 40%);
+  cursor: pointer;
+  border: $border1;
+}

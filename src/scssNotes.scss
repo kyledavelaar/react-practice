@@ -1,0 +1,250 @@
+//nesting
+.container {
+  text-align: center;
+  font-family: 'Pacifico', cursive;
+   img {
+    height: 100px;
+    width: auto;
+  }
+}
+
+
+//nest all font selectors
+.parent {
+  font : {
+    family: Roboto, sans-serif;
+    size: 12px;
+    decoration: none;
+  }
+}
+
+//---------------------
+
+//darken any element by percentages
+.navigation a:hover  {
+  background-color: darken(deepskyblue, 3%);
+}
+
+
+//-------------------------------------------------------------
+//$ is used to define and reference a variable:
+$translucent-white: rgba(255,255,255,0.3);
+
+//variables can also be lists
+$standard-border: 4px solid black;
+
+//variables can also be maps (key value pairs)
+
+//and used later like this
+
+#happy-container {
+  background-color: $translucent-white;
+  border: $standard-border;
+}
+
+
+//-------------------------------------------------------------
+//The & selector references the parent selector when working with CSS psuedo elements and classes.
+
+//on hover rotate 180 degrees
+// .notecard:hover {
+//   transform: rotatey(-180deg);
+// }
+.notecard{ 
+  &:hover{
+      @include transform (rotatey(-180deg));  
+  }
+}
+
+
+//-------------------------------------------------------------
+
+//MIXINS ---------INCLUDE
+
+
+//Mixins have the ability to take in a parameter which is given when used later or as a default parameter like is shown both ways
+@mixin backface-visibility($visibility: hidden) {
+  backface-visibility: $visibility;
+  -webkit-backface-visibility: $visibility;
+  -moz-backface-visibility: $visibility;
+  -ms-backface-visibility: $visibility;
+  -o-backface-visibility: $visibility;
+}
+
+//and then later used
+.notecard {
+  .front, .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+    @include backface_visibility(hidden);
+  }
+}
+
+//-------another good one
+@mixin transition($time){
+  transition: $time;
+  -webkit-transition: $time;
+  -moz-transition: $time;
+  -o-transition: $time;
+}
+
+.notecard {
+  @include transition(0.4s);
+}
+
+
+//------add multiple variables inside a map instead of putting them as defaults inside of the mixin's arguments 
+
+@mixin stripes($direction, $width-percent, $stripe-color, $stripe-background: #FFF) {
+  background: repeating-linear-gradient(
+    $direction,
+    $stripe-background,
+    $stripe-background ($width-percent - 1),
+    $stripe-color 1%,
+    $stripe-background $width-percent
+  );
+}
+
+
+//map: what would have been defaults next to the arguments
+$college-ruled-style: ( 
+    direction: to bottom,
+    width-percent: 15%,
+    stripe-color: blue,
+    stripe-background: white
+);
+
+// pass them all in with the ...
+.definition {
+      width: 100%;
+      height: 100%;
+      @include stripes($college-ruled-style...);
+ }
+
+//-------------------------------------------------------------
+
+
+//In Sass, string interpolation is the process of placing a variable string in the middle of two other strings.
+
+@mixin photo-content($file) {
+  content: url(#{$file}.jpg); //string interpolation
+  object-fit: cover;
+}
+
+
+.photo { 
+  @include photo-content('titanosaur');
+  width: 60%;
+  margin: 0px auto; 
+}
+
+//-----------------------------------------------------------
+
+//FUNCTIONS 
+
+//fade-out/ fade-in
+$color: rgba(39, 39, 39, 0.5);
+$amount: 0.1;
+$color2: fade-out($color, $amount);//rgba(39, 39, 39, 0.4)
+
+//The function adjust-hue($color, $degrees) changes the hue of a color by taking color and a number of degrees (usually between -360 degrees and 360 degrees), and rotate the color wheel by that amount.
+
+//multiplying
+//Since there is no such thing as squared units in CSS, the above would throw an error. You would need to multiply 10px * 10 in order to obtain 100px.
+
+#line {
+  height: $width / 6;
+}
+
+
+//DIVISION a slash is not always divide
+.line {
+  width: $variable/6; //division
+  line-height: (600px)/9; //division
+  margin-left: 20-10 px/ 2; //division
+  font-size: 10px/8px; //not division
+}
+
+//------------------------------------------------------
+
+//EACH loop: iterate on each value in a list
+
+$list: (orange, purple, teal);
+
+//sets color to its respective .color class thanks to string interpolation and forEach
+@each $item in $list {
+  .#{$item} {
+    background: $item;
+  }
+}
+
+
+//FOR LOOP: iterate from start to end
+@for $i from 1 through $total {
+  .ray:nth-child(#{$i}) {
+    background: adjust-hue(blue, $i * $step);
+    width: if($i % 2 == 0, 300px, 350px);
+		margin-left: if($i % 2 == 0, 0px, 50px); 
+  }
+}
+
+
+
+
+//------------if else -----------------
+
+@mixin deck($suit) {
+ @if($suit == hearts || $suit == spades){
+   color: blue;
+ }
+ @else-if($suit === clovers || $suit == diamonds){
+   color: red;
+ }
+ @else{
+   //some rule
+ }
+}
+
+
+
+//------------------------------------------------------
+//import sass files (split so one file has variables, another mixings, another for buttons, another for header, etc. 
+
+@import 'css/footer'
+
+
+//---------------------------------------------------
+
+//EXTEND
+
+//instead of putting multiple classes in an html element you can @extend and then only need to use .lemonade in your html
+
+.lemonade, .strawberry {
+  border: 1px yellow;
+  background-color: #fdd;
+}
+
+.strawberry {
+  @extend .lemonade;
+  border-color: pink;
+}
+
+
+
+//if you want an extend that never actually gets used as a class/id in html then use %
+
+%height {
+  height: 100px;
+}
+
+//container now has height in it and we never have to worry about accidentally including height directly into our html
+.container {
+  @extend %height;
+}
+
+//always extend before using mixins (only use mixins if there is an argument you want to pass into it) 
+
+
+
